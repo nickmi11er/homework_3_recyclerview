@@ -7,13 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import java.util.*
 
 
-class WorkerAdapter(val workers: ArrayList<Worker>) : RecyclerView.Adapter<BaseViewHolder<Worker>>() {
-
+class WorkerAdapter(val workers: ArrayList<Worker>) :
+        RecyclerView.Adapter<BaseViewHolder<Worker>>(), ItemTouchHelperAdapter {
     private val MALE_VIEW_TYPE = 1
-    private val FEMALE_VIEW_TYPE = 2
 
+    private val FEMALE_VIEW_TYPE = 2
     fun addWorker(worker: Worker) {
         workers.add(0, worker)
         notifyItemInserted(0)
@@ -36,6 +37,20 @@ class WorkerAdapter(val workers: ArrayList<Worker>) : RecyclerView.Adapter<BaseV
             else FEMALE_VIEW_TYPE
 
     override fun getItemCount(): Int = workers.size
+
+    override fun onItemMove(fromPos: Int, toPos: Int) {
+        if (fromPos < toPos) {
+            for (i in fromPos until toPos) Collections.swap(workers, i, i + 1)
+        } else {
+            for (i in fromPos downTo toPos + 1) Collections.swap(workers, i, i - 1)
+        }
+        notifyItemMoved(fromPos, toPos)
+    }
+
+    override fun onItemDismiss(pos: Int) {
+        workers.removeAt(pos)
+        notifyItemRemoved(pos)
+    }
 
     class WorkerViewHolder(itemView: View) : BaseViewHolder<Worker>(itemView) {
         val nameView = itemView.findViewById<TextView>(R.id.name)
