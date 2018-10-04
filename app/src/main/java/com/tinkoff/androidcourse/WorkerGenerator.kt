@@ -15,11 +15,13 @@ class WorkerGenerator {
 
     fun generateWorker() = Worker().apply {
         if (randomIndex(2) == 0) {
+            gender = Gender.MALE
             val randomName = maleNames[randomIndex(maleNames.size)]
             val randomSurname = surnames[randomIndex(surnames.size)]
             name = "$randomName $randomSurname"
             photo = malePhoto[randomIndex(malePhoto.size)]
         } else {
+            gender = Gender.FEMALE
             val randomName = femaleNames[randomIndex(femaleNames.size)]
             val randomSurname = surnames[randomIndex(surnames.size)]
             name = "$randomName $randomSurname"
