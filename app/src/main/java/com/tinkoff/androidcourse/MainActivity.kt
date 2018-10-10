@@ -16,15 +16,12 @@ class MainActivity : AppCompatActivity() {
         recycler = findViewById(R.id.recycler)
 
         val wg = WorkerGenerator()
-        val adapter = WorkerAdapter(wg.generateWorkers(20))
+        val workers = wg.generateWorkers(10)
+        val adapter = WorkerAdapter(workers)
 
         val lm = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         recycler.layoutManager = lm
         recycler.addItemDecoration(DividerDecoration(this))
-        recycler.itemAnimator?.addDuration = 1000
-        recycler.itemAnimator?.changeDuration = 1000
-        recycler.itemAnimator?.moveDuration = 1000
-        recycler.itemAnimator?.removeDuration = 1000
 
         val helper = ItemTouchHelper(MyTouchHelperCallback(adapter))
         helper.attachToRecyclerView(recycler)
@@ -32,8 +29,7 @@ class MainActivity : AppCompatActivity() {
         recycler.adapter = adapter
 
         findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
-            adapter.addWorker(wg.generateWorker())
-            recycler.scrollToPosition(0)
+            adapter.addWorkers(wg.generateWorkers(3))
         }
 
     }

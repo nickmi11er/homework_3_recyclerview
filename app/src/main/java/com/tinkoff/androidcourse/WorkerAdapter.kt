@@ -1,16 +1,20 @@
 package com.tinkoff.androidcourse
 
 import android.support.v4.content.ContextCompat
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 
-class WorkerAdapter(val workers: ArrayList<Worker>) :
+class WorkerAdapter(var workers: ArrayList<Worker>) :
         RecyclerView.Adapter<BaseViewHolder<Worker>>(), ItemTouchHelperAdapter {
     private val MALE_VIEW_TYPE = 1
 
@@ -18,6 +22,18 @@ class WorkerAdapter(val workers: ArrayList<Worker>) :
     fun addWorker(worker: Worker) {
         workers.add(0, worker)
         notifyItemInserted(0)
+    }
+
+    fun addWorkers(newWorkers: ArrayList<Worker>) {
+        val disposable = Single.fromCallable {
+            DiffUtil.calculateDiff(WorkerDiffUtilCallback(workers, newWorkers), false)
+        }
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { diffResult ->
+                    workers.addAll(0, newWorkers)
+                    diffResult.dispatchUpdatesTo(this)
+                }
     }
 
     override fun onCreateViewHolder(container: ViewGroup, viewType: Int): BaseViewHolder<Worker> {
